@@ -8,6 +8,7 @@ import (
 	"github.com/Sora233/Sora233-MiraiGo/concern"
 	"github.com/Sora233/Sora233-MiraiGo/lsp/concern_manager"
 	"reflect"
+	"time"
 )
 
 var logger = utils.GetModuleLogger("douyu-concern")
@@ -178,6 +179,10 @@ func (c *Concern) notifyLoop() {
 				continue
 			}
 			for _, groupCode := range groups {
+				if !c.CheckLastNotify(groupCode, event.GetRoomId(), concern.DouyuLive, time.Minute*3) {
+					log.WithField("group_code", groupCode).Debug("last notify time check failed")
+					continue
+				}
 				notify := NewConcernLiveNotify(groupCode, event)
 				c.notify <- notify
 				if event.Living() {

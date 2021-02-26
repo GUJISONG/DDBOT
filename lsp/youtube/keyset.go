@@ -17,6 +17,10 @@ func (k *KeySet) FreshKey(keys ...interface{}) string {
 	return buntdb.YoutubeFreshKey(keys...)
 }
 
+func (k *KeySet) LastNotifyKey(keys ...interface{}) string {
+	return buntdb.YoutubeLastNotifyKey(keys...)
+}
+
 func (k *KeySet) ParseGroupConcernStateKey(key string) (int64, interface{}, error) {
 	return buntdb.ParseYoutubeConcernStateKey(key)
 }

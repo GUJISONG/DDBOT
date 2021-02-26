@@ -7,6 +7,7 @@ import (
 	"github.com/Sora233/Sora233-MiraiGo/concern"
 	"github.com/Sora233/Sora233-MiraiGo/lsp/concern_manager"
 	"github.com/Sora233/sliceutil"
+	"time"
 )
 
 var logger = utils.GetModuleLogger("bilibili-concern")
@@ -196,6 +197,10 @@ func (c *Concern) notifyLoop() {
 			}
 
 			for _, groupCode := range groups {
+				if !c.CheckLastNotify(groupCode, event.Mid, concern.BibiliLive, time.Minute*3) {
+					log.WithField("group_code", groupCode).Debug("last notify time check failed")
+					continue
+				}
 				notify := NewConcernLiveNotify(groupCode, event)
 				c.notify <- notify
 				if event.Status == LiveStatus_Living {
@@ -222,6 +227,10 @@ func (c *Concern) notifyLoop() {
 				continue
 			}
 			for _, groupCode := range groups {
+				//if !c.CheckLastNotify(groupCode, event.Mid, concern.BilibiliNews, time.Minute*3) {
+				//log.WithField("group_code", groupCode).Debug("last notify time check failed")
+				//continue
+				//}
 				notify := NewConcernNewsNotify(groupCode, event)
 				c.notify <- notify
 			}

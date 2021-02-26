@@ -17,6 +17,10 @@ func (l *keySet) FreshKey(keys ...interface{}) string {
 	return buntdb.DouyuFreshKey(keys...)
 }
 
+func (l *keySet) LastNotifyKey(keys ...interface{}) string {
+	return buntdb.DouyuLastNotifyKey(keys...)
+}
+
 func (l *keySet) ParseGroupConcernStateKey(key string) (int64, interface{}, error) {
 	return buntdb.ParseConcernStateKey(key)
 }

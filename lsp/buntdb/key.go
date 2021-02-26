@@ -97,6 +97,15 @@ func GroupMuteKey(keys ...interface{}) string {
 func GroupInvitorKey(keys ...interface{}) string {
 	return NamedKey("GroupInventor", keys)
 }
+func BilibiliLastNotifyKey(keys ...interface{}) string {
+	return NamedKey("BilibiliLastNotify", keys)
+}
+func YoutubeLastNotifyKey(keys ...interface{}) string {
+	return NamedKey("YoutubeLastNotify", keys)
+}
+func DouyuLastNotifyKey(keys ...interface{}) string {
+	return NamedKey("YoutubeLastNotify", keys)
+}
 
 func LoliconPoolStoreKey(keys ...interface{}) string {
 	return NamedKey("LoliconPoolStore", keys)

@@ -6,6 +6,7 @@ import (
 	"github.com/Logiase/MiraiGo-Template/utils"
 	"github.com/Sora233/Sora233-MiraiGo/concern"
 	"github.com/Sora233/Sora233-MiraiGo/lsp/concern_manager"
+	"time"
 )
 
 var logger = utils.GetModuleLogger("youtube")
@@ -103,14 +104,22 @@ func (c *Concern) notifyLoop() {
 			var doNotify bool
 			ctype := idTypes[index]
 			if ctype.ContainAny(concern.YoutubeLive) && event.IsLive() {
-				notify := NewConcernNotify(groupCode, event)
-				c.notify <- notify
-				doNotify = true
+				if c.CheckLastNotify(groupCode, event.ChannelId, concern.YoutubeLive, time.Minute*3) {
+					notify := NewConcernNotify(groupCode, event)
+					c.notify <- notify
+					doNotify = true
+				} else {
+					log.WithField("group_code", groupCode).Debug("last notify time check failed")
+				}
 			}
 			if ctype.ContainAny(concern.YoutubeVideo) && event.IsVideo() {
+				//if c.CheckLastNotify(groupCode, event.ChannelId, concern.YoutubeVideo, time.Minute*3) {
 				notify := NewConcernNotify(groupCode, event)
 				c.notify <- notify
 				doNotify = true
+				//} else {
+				//	log.WithField("group_code", groupCode).Debug("last notify time check failed")
+				//}
 			}
 			if doNotify {
 				if event.IsVideo() {

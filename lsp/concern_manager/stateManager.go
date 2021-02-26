@@ -9,6 +9,7 @@ import (
 	localutils "github.com/Sora233/Sora233-MiraiGo/utils"
 	"github.com/Sora233/sliceutil"
 	"github.com/tidwall/buntdb"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -215,6 +216,38 @@ func (c *StateManager) GroupTypeById(ids []interface{}, types []concern.Type) ([
 		resultType = append(resultType, t)
 	}
 	return result, resultType, nil
+}
+
+func (c *StateManager) GetLastNotifyTime(groupCode int64, id interface{}, ctype concern.Type) int64 {
+	var time int64
+	c.RTxCover(func(tx *buntdb.Tx) error {
+		var err error
+		key := c.LastNotifyKey(groupCode, id, ctype.String())
+		v, _ := tx.Get(key)
+		time, err = strconv.ParseInt(v, 10, 64)
+		if err != nil {
+			logger.WithField("Name", "GetLastNotifyTime").
+				WithField("GroupCode", groupCode).
+				WithField("id", id).
+				WithField("ctype", ctype.String()).
+				Errorf("parse string to int64 failed")
+		}
+		return nil
+	})
+	return time
+}
+
+func (c *StateManager) SetLastNotifyTime(groupCode int64, id interface{}, ctype concern.Type, t int64) error {
+	return c.RWTxCover(func(tx *buntdb.Tx) error {
+		key := c.LastNotifyKey(groupCode, id, ctype.String())
+		_, _, err := tx.Set(key, strconv.FormatInt(t, 10), nil)
+		return err
+	})
+}
+
+func (c *StateManager) CheckLastNotify(groupCode int64, id interface{}, ctype concern.Type, d time.Duration) bool {
+	lastT := c.GetLastNotifyTime(groupCode, id, ctype)
+	return lastT < time.Now().Add(-d).Unix()
 }
 
 func (c *StateManager) FreshCheck(id interface{}, setTTL bool) (result bool, err error) {

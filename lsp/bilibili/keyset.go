@@ -17,6 +17,10 @@ func (k *keySet) FreshKey(keys ...interface{}) string {
 	return buntdb.BilibliFreshKey(keys...)
 }
 
+func (k *keySet) LastNotifyKey(keys ...interface{}) string {
+	return buntdb.BilibiliLastNotifyKey(keys)
+}
+
 func (k *keySet) ParseGroupConcernStateKey(key string) (int64, interface{}, error) {
 	return buntdb.ParseConcernStateKey(key)
 }
